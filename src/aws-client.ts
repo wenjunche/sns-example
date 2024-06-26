@@ -86,6 +86,30 @@ export const getQueueArn = async (queueUrl: string): Promise<string> => {
   return response.Attributes.QueueArn;
 };
 
+/**
+ *For a SNS topic to be able to publish to a SQS queue,  the following needs to be added to Access Policy of the SQS queue
+ *{
+ *  "Statement": [
+ *    {
+ *      "Effect": "Allow",
+ *      "Principal": {
+ *        "Service": "sns.amazonaws.com"
+ *      },
+ *      "Action": "sqs:SendMessage",
+ *      "Resource": "arn:aws:sqs:us-east-2:123456789012:MyQueue",
+ *      "Condition": {
+ *        "ArnEquals": {
+ *          "aws:SourceArn": "arn:aws:sns:us-east-2:123456789012:MyTopic"
+ *        }
+ *      }
+ *    }
+ *  ]
+ *}
+ * 
+ * @param topicArn 
+ * @param queueArn 
+ * @returns 
+ */
 export const subscribeQueue = async (topicArn: string, queueArn: string): Promise<string> => {
     const command = new SubscribeCommand({
       TopicArn: topicArn,
